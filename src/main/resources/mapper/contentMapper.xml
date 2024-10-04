@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lezhintask.mapper.ContentMapper">
+    <!-- 작품 조회 이력 쿼리 -->
+    <select id="selectViewHistoryByContentId" resultType="com.lezhintask.dto.ContentDto">
+        SELECT C.TITLE, U.NAME, CVH.VIEWED_AT
+        FROM CONTENT_VIEW_HISTORY CVH
+        INNER JOIN USER U ON CVH.USER_ID = U.ID
+        INNER JOIN CONTENT C ON CVH.CONTENT_ID = C.ID
+        <where>
+            <if test="contentId != null">
+                AND CVH.CONTENT_ID = #{contentId}
+            </if>
+        </where>
+        ORDER BY C.TITLE, CVH.VIEWED_AT DESC
+    </select>
+
+    <!-- 인기 작품 상위 10개 조회 쿼리 -->
+    <select id="selectTopViewContent" resultType="com.lezhintask.dto.ContentDto">
+        SELECT C.TITLE, COUNT(CVH.CONTENT_ID) AS VIEW_COUNT
+        FROM CONTENT_VIEW_HISTORY CVH
+        INNER JOIN CONTENT C ON CVH.CONTENT_ID = C.ID
+        GROUP BY CVH.CONTENT_ID
+        ORDER BY VIEW_COUNT DESC LIMIT 10
+    </select>
+</mapper>
