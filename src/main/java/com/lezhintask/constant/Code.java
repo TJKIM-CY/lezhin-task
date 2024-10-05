@@ -9,8 +9,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Code {
-    SUCCESS("0000", "Success"),
-    FAIL("1000", "Fail");
+    SUCCESS("0000", "성공"),
+    FAIL("1000", "실패"),
+    UNAUTHORIZED("4000", "인증 에러");
 
     private final String code;
     private final String message;
