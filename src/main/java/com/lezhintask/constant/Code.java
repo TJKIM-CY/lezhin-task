@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 public enum Code {
     SUCCESS("0000", "성공"),
     FAIL("1000", "실패"),
+    AGE_RESTRICTION("2000", "미성년자 작품 조회/구매 불가"),
     UNAUTHORIZED("4000", "인증 에러"),
     INTERNAL_SERVER_ERROR("5000", "서버 에러");
 

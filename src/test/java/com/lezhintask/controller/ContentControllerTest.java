@@ -1,7 +1,10 @@
 package com.lezhintask.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lezhintask.constant.Code;
 import com.lezhintask.dto.ContentDto;
+import com.lezhintask.dto.ContentRequestDto;
+import com.lezhintask.dto.UserDto;
 import com.lezhintask.service.ContentServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -9,12 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,38 +35,34 @@ public class ContentControllerTest {
     @MockBean
     private ContentServiceImpl contentServiceImpl;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     // getViewHistory 메소드 테스트
     @Test
     void getViewHistoryByContentId() throws Exception {
         ContentDto content1 = new ContentDto();
         content1.setTitle("Title1");
-        content1.setName("User1");
         content1.setViewedAt("2023-10-01");
 
         ContentDto content2 = new ContentDto();
         content2.setTitle("Title2");
-        content2.setName("User2");
         content2.setViewedAt("2023-10-02");
+
+        UserDto user1 = new UserDto();
+        user1.setUserId("User1");
+
+        UserDto user2 = new UserDto();
+        user2.setUserId("User2");
 
         List<ContentDto> mockContentList = Arrays.asList(content1, content2);
 
         Mockito.when(contentServiceImpl.getViewHistoryByContentId(anyString())).thenReturn(mockContentList);
 
-        mockMvc.perform(get("/api/content/view-history")
-                        .param("contentId", "123")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code", is(Code.SUCCESS.getCode())))
-                .andExpect(jsonPath("$.data", hasSize(2)))
-                .andExpect(jsonPath("$.data[0].title", is("Title1")))
-                .andExpect(jsonPath("$.data[0].name", is("User1")))
-                .andExpect(jsonPath("$.data[0].viewedAt", is("2023-10-01")))
-                .andExpect(jsonPath("$.data[1].title", is("Title2")))
-                .andExpect(jsonPath("$.data[1].name", is("User2")))
-                .andExpect(jsonPath("$.data[1].viewedAt", is("2023-10-02")));
+        mockMvc.perform(get("/api/content/view-history").param("contentId", "123").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$.code", is(Code.SUCCESS.getCode()))).andExpect(jsonPath("$.data", hasSize(2))).andExpect(jsonPath("$.data[0].title", is("Title1"))).andExpect(jsonPath("$.data[0].userId", is("User1"))).andExpect(jsonPath("$.data[0].viewedAt", is("2023-10-01"))).andExpect(jsonPath("$.data[1].title", is("Title2"))).andExpect(jsonPath("$.data[1].userId", is("User2"))).andExpect(jsonPath("$.data[1].viewedAt", is("2023-10-02")));
     }
 
-    // getTopViewContent 메소드에 테스트
+    // getTopViewContent 메소드 테스트
     @Test
     void getTopViewContent() throws Exception {
         ContentDto content1 = new ContentDto();
@@ -73,16 +75,38 @@ public class ContentControllerTest {
 
         List<ContentDto> mockContentList = Arrays.asList(content1, content2);
 
-        Mockito.when(contentServiceImpl.getTopViewContent()).thenReturn(mockContentList);
+        when(contentServiceImpl.getTopViewContent()).thenReturn(mockContentList);
 
-        mockMvc.perform(get("/api/content/top-view")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code", is(Code.SUCCESS.getCode())))
-                .andExpect(jsonPath("$.data", hasSize(2)))
-                .andExpect(jsonPath("$.data[0].title", is("Title1")))
-                .andExpect(jsonPath("$.data[0].viewCount", is(100)))
-                .andExpect(jsonPath("$.data[1].title", is("Title2")))
-                .andExpect(jsonPath("$.data[1].viewCount", is(90)));
+        mockMvc.perform(get("/api/content/top-view").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$.code", is(Code.SUCCESS.getCode()))).andExpect(jsonPath("$.data", hasSize(2))).andExpect(jsonPath("$.data[0].title", is("Title1"))).andExpect(jsonPath("$.data[0].viewCount", is(100))).andExpect(jsonPath("$.data[1].title", is("Title2"))).andExpect(jsonPath("$.data[1].viewCount", is(90)));
+    }
+
+    // purchaseContent 메소드 성공 테스트
+    @Test
+    @WithMockUser(username = "user1", roles = {"USER"})
+    public void testPurchaseContent_Success() throws Exception {
+        ContentRequestDto contentRequestDto = new ContentRequestDto();
+        contentRequestDto.setContentId("content1");
+
+        ContentDto contentInfo = new ContentDto();
+        contentInfo.setAdultContent(false);
+
+        when(contentServiceImpl.getContentInfo(anyString())).thenReturn(contentInfo);
+
+        mockMvc.perform(post("/api/content/purchase").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(contentRequestDto))).andExpect(status().isOk()).andExpect(jsonPath("$.code", is(Code.SUCCESS.getCode())));
+    }
+
+    // purchaseContent 메소드 실패 테스트
+    @Test
+    @WithMockUser(username = "user1", roles = {"USER"})
+    public void testPurchaseContent_AgeRestriction() throws Exception {
+        ContentRequestDto contentRequestDto = new ContentRequestDto();
+        contentRequestDto.setContentId("content1");
+
+        ContentDto contentInfo = new ContentDto();
+        contentInfo.setAdultContent(true);
+
+        when(contentServiceImpl.getContentInfo(anyString())).thenReturn(contentInfo);
+
+        mockMvc.perform(post("/api/content/purchase").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(contentRequestDto))).andExpect(status().isOk()).andExpect(jsonPath("$.code", is(Code.AGE_RESTRICTION.getCode())));
     }
 }

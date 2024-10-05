@@ -24,4 +24,20 @@ public interface ContentService {
      * @return 인기 작품 리스트
      */
     List<ContentDto> getTopViewContent();
+
+    /**
+     * 작품 정보 조회
+     *
+     * @param contentId 작품 ID
+     * @return 작품 정보
+     */
+    ContentDto getContentInfo(String contentId);
+
+    /**
+     * 작품 구매 정보 저장
+     *
+     * @param contentInfo 프로모션 정보
+     * @param userId      유저 ID
+     */
+    void savePurchase(ContentDto contentInfo, String userId);
 }

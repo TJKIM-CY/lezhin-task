@@ -22,8 +22,24 @@
     <select id="selectTopViewContent" resultType="com.lezhintask.dto.ContentDto">
         SELECT C.TITLE, COUNT(CVH.CONTENT_ID) AS VIEW_COUNT
         FROM CONTENT_VIEW_HISTORY CVH
-        INNER JOIN CONTENT C ON CVH.CONTENT_ID = C.ID
+                 INNER JOIN CONTENT C ON CVH.CONTENT_ID = C.ID
         GROUP BY CVH.CONTENT_ID
         ORDER BY VIEW_COUNT DESC LIMIT 10
     </select>
+
+    <!-- 작품 정보 조회 쿼리 -->
+    <select id="getContentInfo" resultType="com.lezhintask.dto.ContentDto">
+        SELECT C.CONTENT_ID,
+               CASE WHEN CFP.ID != NULL THEN 0 ELSE C.PRICE END AS PAYMENT_PRICE,
+            CFP.ID AS PROMOTION_ID, C.IS_ADULT AS IS_ADULT_CONTENT
+        FROM CONTENT C
+            LEFT JOIN CONTENT_FREE_PROMOTION CFP ON C.ID = CFP.CONTENT_ID
+        WHERE C.ID = #{contentId}
+    </select>
+
+    <!-- 작품 구매 정보 저장 쿼리 -->
+    <insert id="insertPurchase">
+        INSERT INTO CONTENT_PURCHASE (ID, USER_ID, CONTENT_ID, PROMOTION_ID, PAYMENT_PRICE)
+        VALUES (UUID(), #{userId}, #{contentId}, #{promotionId}, #{paymentPrice})
+    </insert>
 </mapper>
