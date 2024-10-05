@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 public enum Code {
     SUCCESS("0000", "성공"),
     FAIL("1000", "실패"),
-    UNAUTHORIZED("4000", "인증 에러");
+    UNAUTHORIZED("4000", "인증 에러"),
+    INTERNAL_SERVER_ERROR("5000", "서버 에러");
 
     private final String code;
     private final String message;
