@@ -1,6 +1,7 @@
 package com.lezhintask.service;
 
 import com.lezhintask.dto.SignupRequestDto;
+import com.lezhintask.dto.UserDto;
 import com.lezhintask.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,5 +32,18 @@ public class UserServiceImpl implements UserService {
 
         // 유저 정보 저장
         userMapper.insertUser(signupRequestDto);
+    }
+
+    /**
+     * 유저 정보 조회
+     *
+     * @param userId 유저 ID
+     */
+    @Override
+    public UserDto findByUserId(String userId) {
+        // 유저 정보 조회
+        UserDto userInfo = userMapper.findByUserId(userId);
+
+        return userInfo;
     }
 }

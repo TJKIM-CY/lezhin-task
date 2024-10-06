@@ -4,7 +4,7 @@ import com.lezhintask.constant.Code;
 import com.lezhintask.constant.Path;
 import com.lezhintask.dto.*;
 import com.lezhintask.security.JwtTokenProvider;
-import com.lezhintask.service.UserService;
+import com.lezhintask.service.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class UserController {
     private JwtTokenProvider tokenProvider;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     /**
      * 유저 로그인 API
@@ -70,7 +70,8 @@ public class UserController {
     @Operation(summary = "유저 회원가입", description = "유저 회원가입")
     public ResponseEntity<ResponseDto> signupUser(@RequestBody SignupRequestDto signupRequestDto) {
         // 유저 회원가입
-        userService.signupUser(signupRequestDto);
+        userServiceImpl.signupUser(signupRequestDto);
+
         ResponseDto response = new ResponseDto(Code.SUCCESS);
 
         return ResponseEntity.ok(response);

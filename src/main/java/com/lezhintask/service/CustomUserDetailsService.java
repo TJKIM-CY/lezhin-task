@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with userId: " + userId);
         }
 
-        // 유저 객체로 반환
+        // CustomUserDetails 객체로 변환
         return new CustomUserDetails(user.getUserId(), user.getPassword(), user.isAdult(), new ArrayList<>());
     }
 }

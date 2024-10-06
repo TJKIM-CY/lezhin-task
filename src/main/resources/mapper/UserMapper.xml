@@ -7,13 +7,13 @@
     <!-- 유저 정보 저장 쿼리 -->
     <insert id="insertUser">
         INSERT INTO USER (ID, PASSWORD, IS_ADULT)
-        VALUES (#{id}, #{password}, #{isAdult})
+        VALUES (#{userId}, #{password}, #{isAdult})
     </insert>
 
     <!-- 유저 정보 조회 쿼리 -->
     <select id="findByUserId" resultType="com.lezhintask.dto.UserDto">
         SELECT ID AS USER_ID, PASSWORD AS PASSWORD, IS_ADULT AS IS_ADULT
         FROM USER
-        WHERE ID = #{id}
+        WHERE ID = #{userId}
     </select>
 </mapper>

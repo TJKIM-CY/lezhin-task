@@ -3,11 +3,12 @@ package com.lezhintask.controller;
 import com.lezhintask.constant.Code;
 import com.lezhintask.constant.Path;
 import com.lezhintask.dto.*;
-import com.lezhintask.security.CustomUserDetails;
 import com.lezhintask.service.ContentServiceImpl;
+import com.lezhintask.service.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,9 @@ public class ContentController {
 
     @Autowired
     private ContentServiceImpl contentServiceImpl;
+
+    @Autowired
+    private UserServiceImpl userServiceImpl;
 
     /**
      * 작품 조회 이력 API
@@ -67,10 +71,16 @@ public class ContentController {
         String contentId = contentRequestDto.getContentId();
         ContentDto contentInfo = contentServiceImpl.getContentInfo(contentId);
 
+        // contentInfo가 null 처리
+        if (contentInfo == null) {
+            ResponseDto response = new ResponseDto(Code.FAIL);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
         // 유저 정보 조회
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        String userId = userDetails.getUsername();
-        boolean isAdult = userDetails.isAdult();
+        String userId = authentication.getName();
+        UserDto userDto = userServiceImpl.findByUserId(userId);
+        boolean isAdult = userDto.isAdult();
 
         // 성인 작품 여부와 유저 성인 여부 비교
         if (contentInfo.isAdultContent() && !isAdult) {
