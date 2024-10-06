@@ -109,4 +109,16 @@ public class ContentController {
 
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * 작품 및 작품 전체 조회 이력 삭제 API
+     */
+    @DeleteMapping(Path.CONTENT + "/{contentId}")
+    @Operation(summary = "작품 및 작품 전체 조회 이력 삭제", description = "작품 및 작품 전체 조회 이력 삭제")
+    public ResponseEntity<ResponseDto> deleteContentAndHistory(@PathVariable String contentId) {
+        contentServiceImpl.deleteContentAndHistory(contentId);
+        ResponseDto response = new ResponseDto(Code.SUCCESS);
+
+        return ResponseEntity.ok(response);
+    }
 }

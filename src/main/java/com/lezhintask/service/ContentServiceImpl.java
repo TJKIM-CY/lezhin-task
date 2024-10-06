@@ -4,6 +4,7 @@ import com.lezhintask.dto.ContentDto;
 import com.lezhintask.mapper.ContentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -67,5 +68,16 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public List<ContentDto> getTopPurchaseContent() {
         return contentMapper.selectTopPurchaseContent();
+    }
+
+    /**
+     * 작품과 작품 전체 조회 이력 삭제
+     *
+     * @param contentId 작품 ID
+     */
+    @Transactional
+    public void deleteContentAndHistory(String contentId) {
+        contentMapper.deleteViewHistoryByContentId(contentId);
+        contentMapper.deleteContentById(contentId);
     }
 }

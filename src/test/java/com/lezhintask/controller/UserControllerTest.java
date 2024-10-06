@@ -50,7 +50,7 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // signupUser 메소드 테스트
+    // 회원가입 테스트
     @Test
     public void testSignupUser() throws Exception {
         SignupRequestDto signupRequestDto = new SignupRequestDto();
@@ -66,7 +66,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.code", is(Code.SUCCESS.getCode())));
     }
 
-    // loginUser 메소드 성공 테스트
+    // 로그인 성공 테스트
     @Test
     public void testLoginUser_Success() throws Exception {
         LoginRequestDto loginRequestDto = new LoginRequestDto();
@@ -91,7 +91,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.data.expirationDate").exists());
     }
 
-    // loginUser 메소드 실패 테스트
+    // 로그인 메소드 실패 테스트
     @Test
     public void testLoginUser_Unauthorized() throws Exception {
         LoginRequestDto loginRequestDto = new LoginRequestDto();

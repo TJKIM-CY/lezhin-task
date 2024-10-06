@@ -47,4 +47,11 @@ public interface ContentService {
      * @return 구매 인기 작품 리스트
      */
     List<ContentDto> getTopPurchaseContent();
+
+    /**
+     * 작품과 작품 전체 조회 이력 삭제
+     *
+     * @param contentId 작품 ID
+     */
+    void deleteContentAndHistory (String contentId);
 }

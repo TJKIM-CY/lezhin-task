@@ -48,4 +48,18 @@ public interface ContentMapper {
      * @return 구매 인기 작품 리스트
      */
     List<ContentDto> selectTopPurchaseContent();
+
+    /**
+     * 작품 삭제
+     *
+     * @param contentId 작품 ID
+     */
+    void deleteContentById(@Param("contentId") String contentId);
+
+    /**
+     * 작품 전체 조회 이력 삭제
+     *
+     * @param contentId 작품 ID
+     */
+    void deleteViewHistoryByContentId(@Param("contentId") String contentId);
 }

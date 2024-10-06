@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.*;
@@ -46,7 +47,7 @@ public class ContentControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // getViewHistory 메소드 테스트
+    // 작품 조회 이력 테스트
     @Test
     void getViewHistoryByContentId() throws Exception {
         ContentDto content1 = new ContentDto();
@@ -77,7 +78,7 @@ public class ContentControllerTest {
                 .andExpect(jsonPath("$.data[1].viewedAt", is("2023-10-02")));
     }
 
-    // getTopViewContent 메소드 테스트
+    // 인기 작품 상위 10개 조회 테스트
     @Test
     void getTopViewContent() throws Exception {
         ContentDto content1 = new ContentDto();
@@ -103,7 +104,7 @@ public class ContentControllerTest {
                 .andExpect(jsonPath("$.data[1].viewCount", is(90)));
     }
 
-    // purchaseContent 메소드 성공 테스트
+    // 작품 구매 성공 테스트
     @Test
     public void testPurchaseContent_Success() throws Exception {
         ContentRequestDto contentRequestDto = new ContentRequestDto();
@@ -130,7 +131,7 @@ public class ContentControllerTest {
                 .andExpect(jsonPath("$.code", is(Code.SUCCESS.getCode())));
     }
 
-    // purchaseContent 메소드 실패 테스트
+    // 작품 구매 실패 테스트
     @Test
     public void testPurchaseContent_AgeRestriction() throws Exception {
         ContentRequestDto contentRequestDto = new ContentRequestDto();
@@ -157,9 +158,9 @@ public class ContentControllerTest {
                 .andExpect(jsonPath("$.code", is(Code.AGE_RESTRICTION.getCode())));
     }
 
-    // getTopPurchase 메소드 테스트
+    // 구매 인기 작품 상위 10개 조회 테스트
     @Test
-    void getTopPurchaseContent() throws Exception {
+    void testGetTopPurchaseContent() throws Exception {
         ContentDto content1 = new ContentDto();
         content1.setTitle("Title1");
         content1.setContentId("content1");
@@ -185,5 +186,16 @@ public class ContentControllerTest {
                 .andExpect(jsonPath("$.data[1].title", is("Title2")))
                 .andExpect(jsonPath("$.data[1].contentId", is("content2")))
                 .andExpect(jsonPath("$.data[1].purchaseCount", is(120)));
+    }
+
+    // 작품 및 작품 전체 조회 이력 삭제 테스트
+    @Test
+    void testDeleteContentAndHistory() throws Exception {
+        String contentId = "content1";
+
+        mockMvc.perform(delete("/api/content/" + contentId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code", is(Code.SUCCESS.getCode())));
     }
 }
