@@ -8,7 +8,7 @@
     <select id="selectViewHistoryByContentId" resultType="com.lezhintask.dto.ContentDto">
         SELECT C.TITLE, U.ID AS USER_ID, CVH.VIEWED_AT
         FROM CONTENT_VIEW_HISTORY CVH
-        INNER JOIN USER U ON CVH.USER_ID = U.ID
+        INNER JOIN USERS U ON CVH.USER_ID = U.ID
         INNER JOIN CONTENT C ON CVH.CONTENT_ID = C.ID
         <where>
             <if test="contentId != null">
