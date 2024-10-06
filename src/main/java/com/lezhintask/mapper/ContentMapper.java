@@ -62,4 +62,14 @@ public interface ContentMapper {
      * @param contentId 작품 ID
      */
     void deleteViewHistoryByContentId(@Param("contentId") String contentId);
+
+    /**
+     * 작품 리스트 조회
+     *
+     * @param userId 유저 ID
+     * @param limit 데이터 갯수
+     * @param offset 조회 시작 위치
+     * @return 작품 리스트
+     */
+    List<ContentDto> selectContentsByUserId(@Param("userId") String userId, @Param("limit") int limit, @Param("offset") int offset);
 }

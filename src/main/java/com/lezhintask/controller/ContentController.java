@@ -35,7 +35,7 @@ public class ContentController {
      * @return 작품 조회 이력 리스트
      */
     @GetMapping(Path.CONTENT_VIEW_HISTORY)
-    @Operation(summary = "작품 조회 이력", description = "작품 ID로 조회 이력")
+    @Operation(summary = "작품 조회 이력", description = "작품 ID로 이력 조회")
     public ResponseEntity<DataResponseDto<List<ContentDto>>> getViewHistoryByContentId(@RequestParam(required = false) String contentId) {
         List<ContentDto> history = contentServiceImpl.getViewHistoryByContentId(contentId);
         DataResponseDto<List<ContentDto>> response = new DataResponseDto<>(Code.SUCCESS, history);
@@ -118,6 +118,27 @@ public class ContentController {
     public ResponseEntity<ResponseDto> deleteContentAndHistory(@PathVariable String contentId) {
         contentServiceImpl.deleteContentAndHistory(contentId);
         ResponseDto response = new ResponseDto(Code.SUCCESS);
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 작품 리스트 조회
+     *
+     * @param userId 유저 ID
+     * @param page 페이지 번호 (기본값: 1)
+     * @param size 페이지 크기 (기본값: 10)
+     * @return 작품 리스트
+     */
+    @GetMapping(Path.CONTENT)
+    @Operation(summary = "작품 리스트 조회", description = "작품 리스트 조회")
+    public ResponseEntity<DataResponseDto<List<ContentDto>>> getContentList(
+            @RequestParam String userId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        List<ContentDto> contentList = contentServiceImpl.getContentsByUserId(userId, page, size);
+        DataResponseDto<List<ContentDto>> response = new DataResponseDto<>(Code.SUCCESS, contentList);
 
         return ResponseEntity.ok(response);
     }

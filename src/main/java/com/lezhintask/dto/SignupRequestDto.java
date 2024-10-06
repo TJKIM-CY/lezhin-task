@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 @Schema(description = "회원가입 요청 DTO")
 public class SignupRequestDto {
-    @Schema(description = "유저 ID", example = "user1")
+    @Schema(description = "유저 ID", example = "user20")
     private String userId;
 
-    @Schema(description = "유저 비밀번호", example = "aaaaaa11")
+    @Schema(description = "유저 비밀번호", example = "1234")
     private String password;
 
     @Schema(description = "성인 여부", example = "true")

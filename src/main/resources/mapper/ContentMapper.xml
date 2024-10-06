@@ -10,12 +10,10 @@
         FROM CONTENT_VIEW_HISTORY CVH
         INNER JOIN USERS U ON CVH.USER_ID = U.ID
         INNER JOIN CONTENT C ON CVH.CONTENT_ID = C.ID
-        <where>
-            <if test="contentId != null">
-                AND CVH.CONTENT_ID = #{contentId}
-            </if>
-        </where>
-        ORDER BY C.TITLE, CVH.VIEWED_AT DESC
+        <if test="contentId != null and contentId != ''">
+            WHERE CVH.CONTENT_ID = #{contentId}
+        </if>
+        ORDER BY CVH.VIEWED_AT DESC
     </select>
 
     <!-- 인기 작품 상위 10개 조회 쿼리 -->
@@ -66,4 +64,19 @@
         FROM CONTENT_VIEW_HISTORY
         WHERE CONTENT_ID = #{contentId}
     </delete>
+
+    <!-- 작품 조회 쿼리 -->
+    <select id="selectContentsByUserId" resultType="com.lezhintask.dto.ContentDto">
+        SELECT ID AS CONTENT_ID, TITLE, DESCRIPTION, PRICE, IS_PAID, IS_ADULT AS IS_ADULT_CONTENT
+        FROM CONTENT
+        WHERE IS_ADULT = FALSE
+        <if test="userId != null and userId != ''">
+        OR (IS_ADULT = TRUE
+            AND EXISTS (SELECT 1 FROM USERS WHERE USERS.ID = #{userId} AND USERS.IS_ADULT = TRUE)
+            )
+        </if>
+        ORDER BY TITLE
+        LIMIT #{limit}
+        OFFSET #{offset}
+    </select>
 </mapper>

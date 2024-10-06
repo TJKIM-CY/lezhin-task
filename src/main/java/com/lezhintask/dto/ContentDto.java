@@ -1,10 +1,13 @@
 package com.lezhintask.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 @Schema(description = "작품 정보 DTO")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContentDto {
     @Schema(description = "작품 제목")
     private String title;
@@ -32,4 +35,13 @@ public class ContentDto {
 
     @Schema(description = "유저 ID")
     private String userId;
+
+    @Schema(description = "작품 금액")
+    private int price;
+
+    @Schema(description = "작품 설명")
+    private String description;
+
+    @Schema(description = "작품 유/무료 여부")
+    private boolean isPaid;
 }
