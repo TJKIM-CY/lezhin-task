@@ -45,7 +45,7 @@ public class ContentServiceImpl implements ContentService {
      */
     @Override
     public ContentDto getContentInfo(String contentId) {
-        return contentMapper.getContentInfo(contentId);
+        return contentMapper.selectContentInfo(contentId);
     }
 
     /**
@@ -57,5 +57,15 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public void savePurchase(ContentDto contentInfo, String userId) {
         contentMapper.insertPurchase(contentInfo, userId);
+    }
+
+    /**
+     * 구매 인기 작품 상위 10개 조회
+     *
+     * @return 구매 인기 작품 리스트
+     */
+    @Override
+    public List<ContentDto> getTopPurchaseContent() {
+        return contentMapper.selectTopPurchaseContent();
     }
 }

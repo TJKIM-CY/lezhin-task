@@ -26,4 +26,10 @@ public class ContentDto {
 
     @Schema(description = "작품 성인 여부")
     private boolean isAdultContent;
+
+    @Schema(description = "작품 구매 수")
+    private int purchaseCount;
+
+    @Schema(description = "유저 ID")
+    private String userId;
 }

@@ -85,4 +85,18 @@ public class ContentController {
 
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * 구매 인기 작품 상위 10개 조회 API
+     *
+     * @return 구매 인기 작품 리스트
+     */
+    @GetMapping(Path.TOP_PURCHASE_CONTENT)
+    @Operation(summary = "구매 인기 작품 조회", description = "구매 인기 작품 상위 10개 조회")
+    public ResponseEntity<DataResponseDto<List<ContentDto>>> getTopPurchaseContent() {
+        List<ContentDto> topPurchaseContent = contentServiceImpl.getTopPurchaseContent();
+        DataResponseDto<List<ContentDto>> response = new DataResponseDto<>(Code.SUCCESS, topPurchaseContent);
+
+        return ResponseEntity.ok(response);
+    }
 }

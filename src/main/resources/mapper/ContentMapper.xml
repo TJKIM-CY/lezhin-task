@@ -6,7 +6,7 @@
 <mapper namespace="com.lezhintask.mapper.ContentMapper">
     <!-- 작품 조회 이력 쿼리 -->
     <select id="selectViewHistoryByContentId" resultType="com.lezhintask.dto.ContentDto">
-        SELECT C.TITLE, U.NAME, CVH.VIEWED_AT
+        SELECT C.TITLE, U.ID AS USER_ID, CVH.VIEWED_AT
         FROM CONTENT_VIEW_HISTORY CVH
         INNER JOIN USER U ON CVH.USER_ID = U.ID
         INNER JOIN CONTENT C ON CVH.CONTENT_ID = C.ID
@@ -28,8 +28,8 @@
     </select>
 
     <!-- 작품 정보 조회 쿼리 -->
-    <select id="getContentInfo" resultType="com.lezhintask.dto.ContentDto">
-        SELECT C.CONTENT_ID,
+    <select id="selectContentInfo" resultType="com.lezhintask.dto.ContentDto">
+        SELECT C.ID AS CONTENT_ID,
                CASE WHEN CFP.ID != NULL THEN 0 ELSE C.PRICE END AS PAYMENT_PRICE,
             CFP.ID AS PROMOTION_ID, C.IS_ADULT AS IS_ADULT_CONTENT
         FROM CONTENT C
@@ -40,6 +40,16 @@
     <!-- 작품 구매 정보 저장 쿼리 -->
     <insert id="insertPurchase">
         INSERT INTO CONTENT_PURCHASE (ID, USER_ID, CONTENT_ID, PROMOTION_ID, PAYMENT_PRICE)
-        VALUES (UUID(), #{userId}, #{contentId}, #{promotionId}, #{paymentPrice})
+        VALUES (UUID(), #{userId}, #{contentInfo.contentId}, #{contentInfo.promotionId}, #{contentInfo.paymentPrice})
     </insert>
+
+    <!-- 구매 인기 작품 상위 10개 조회 쿼리 -->
+    <select id="selectTopPurchaseContent" resultType="com.lezhintask.dto.ContentDto">
+        SELECT CP.CONTENT_ID, C.TITLE, COUNT(*) AS PURCHASE_COUNT
+        FROM CONTENT_PURCHASE CP
+        INNER JOIN CONTENT C ON CP.CONTENT_ID = C.ID
+        GROUP BY CP.CONTENT_ID
+        ORDER BY PURCHASE_COUNT DESC
+        LIMIT 10
+    </select>
 </mapper>

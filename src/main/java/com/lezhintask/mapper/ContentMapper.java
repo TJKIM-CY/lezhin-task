@@ -27,18 +27,25 @@ public interface ContentMapper {
     List<ContentDto> selectTopViewContent();
 
     /**
-     * 작품 정보 저회
+     * 작품 정보 조회
      *
      * @param contentId 작품 ID
      * @return 작품 정보
      */
-    ContentDto getContentInfo(@Param("contentId") String contentId);
+    ContentDto selectContentInfo(@Param("contentId") String contentId);
 
     /**
      * 작품 구매 정보 저장
      *
      * @param contentInfo 프로모션 정보
-     * @param userId      유저 ID
+     * @param userId 유저 ID
      */
     void insertPurchase(ContentDto contentInfo, String userId);
+
+    /**
+     * 구매 인기 작품 상위 10개 조회
+     *
+     * @return 구매 인기 작품 리스트
+     */
+    List<ContentDto> selectTopPurchaseContent();
 }
