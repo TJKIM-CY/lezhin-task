@@ -3,6 +3,7 @@ package com.lezhintask.service;
 import com.lezhintask.dto.ContentDto;
 import com.lezhintask.mapper.ContentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class ContentServiceImpl implements ContentService {
      * @param contentId 작품 ID
      * @return 작품 조회 이력 리스트
      */
+    @Cacheable("viewHistory")
     @Override
     public List<ContentDto> getViewHistoryByContentId(String contentId) {
         return contentMapper.selectViewHistoryByContentId(contentId);
@@ -33,6 +35,7 @@ public class ContentServiceImpl implements ContentService {
      *
      * @return 인기 작품 리스트
      */
+    @Cacheable("topViewContent")
     @Override
     public List<ContentDto> getTopViewContent() {
         return contentMapper.selectTopViewContent();
@@ -65,6 +68,7 @@ public class ContentServiceImpl implements ContentService {
      *
      * @return 구매 인기 작품 리스트
      */
+    @Cacheable("topPurchaseContent")
     @Override
     public List<ContentDto> getTopPurchaseContent() {
         return contentMapper.selectTopPurchaseContent();
