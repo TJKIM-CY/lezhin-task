@@ -88,12 +88,15 @@ public class ContentServiceImpl implements ContentService {
     /**
      * 작품 리스트 조회
      *
+     * @param isAdult 성인 여부
      * @param userId 유저 ID
      * @param page 페이지 번호 (디폴트 : 1)
      * @param size 페이지 크기 (디폴트 : 10)
      * @return 작품 리스트
      */
-    public List<ContentDto> getContentsByUserId(String userId, int page, int size) {
+    @Cacheable(value = "contentList", key = "#isAdult ? 'adultContentList' : 'minorContentList'")
+    @Override
+    public List<ContentDto> getContentsByUserId(boolean isAdult, String userId, int page, int size) {
         int offset = (page - 1) * size;
 
         return contentMapper.selectContentsByUserId(userId, size, offset);

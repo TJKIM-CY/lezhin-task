@@ -137,7 +137,10 @@ public class ContentController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        List<ContentDto> contentList = contentServiceImpl.getContentsByUserId(userId, page, size);
+        UserDto userDto = userServiceImpl.findByUserId(userId);
+        boolean isAdult = userDto.isAdult();
+
+        List<ContentDto> contentList = contentServiceImpl.getContentsByUserId(isAdult, userId, page, size);
         DataResponseDto<List<ContentDto>> response = new DataResponseDto<>(Code.SUCCESS, contentList);
 
         return ResponseEntity.ok(response);
