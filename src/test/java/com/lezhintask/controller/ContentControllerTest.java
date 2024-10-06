@@ -1,12 +1,14 @@
 package com.lezhintask.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lezhintask.config.RateLimiter;
 import com.lezhintask.constant.Code;
 import com.lezhintask.dto.ContentDto;
 import com.lezhintask.dto.ContentRequestDto;
 import com.lezhintask.dto.UserDto;
 import com.lezhintask.service.ContentServiceImpl;
 import com.lezhintask.service.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +49,17 @@ public class ContentControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private RateLimiter rateLimiter;
+
+    @BeforeEach
+    public void setUp() {
+        when(rateLimiter.tryConsume()).thenReturn(true);
+    }
+
     // 작품 조회 이력 테스트
     @Test
-    void getViewHistoryByContentId() throws Exception {
+    void testGetViewHistoryByContentId() throws Exception {
         ContentDto content1 = new ContentDto();
         content1.setTitle("Title1");
         content1.setUserId("user1");
@@ -80,7 +90,7 @@ public class ContentControllerTest {
 
     // 인기 작품 상위 10개 조회 테스트
     @Test
-    void getTopViewContent() throws Exception {
+    void testGetTopViewContent() throws Exception {
         ContentDto content1 = new ContentDto();
         content1.setTitle("Title1");
         content1.setViewCount(100);

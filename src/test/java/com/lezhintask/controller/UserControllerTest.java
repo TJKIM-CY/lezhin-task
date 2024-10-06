@@ -1,11 +1,13 @@
 package com.lezhintask.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lezhintask.config.RateLimiter;
 import com.lezhintask.constant.Code;
 import com.lezhintask.dto.LoginRequestDto;
 import com.lezhintask.dto.SignupRequestDto;
 import com.lezhintask.security.JwtTokenProvider;
 import com.lezhintask.service.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -49,6 +51,14 @@ public class UserControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private RateLimiter rateLimiter;
+
+    @BeforeEach
+    public void setUp() {
+        when(rateLimiter.tryConsume()).thenReturn(true);
+    }
 
     // 회원가입 테스트
     @Test
