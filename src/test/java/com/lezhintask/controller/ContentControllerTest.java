@@ -21,6 +21,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -207,5 +208,40 @@ public class ContentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", is(Code.SUCCESS.getCode())));
+    }
+
+    // 작품 리스트 조회 테스트
+    @Test
+    void testGetContentList() throws Exception {
+        UserDto userDto = new UserDto();
+        userDto.setAdult(true);
+        Mockito.when(userServiceImpl.findByUserId(anyString())).thenReturn(userDto);
+
+        ContentDto contentDto = new ContentDto();
+        contentDto.setContentId("content1");
+        contentDto.setTitle("title1");
+        contentDto.setDescription("description1");
+        contentDto.setPrice(100);
+        contentDto.setPaid(true);
+        contentDto.setAdultContent(true);
+
+        List<ContentDto> contentList = Collections.singletonList(contentDto);
+
+        Mockito.when(contentServiceImpl.getContentsByUserId(true, "user1", 1, 10)).thenReturn(contentList);
+
+        mockMvc.perform(get("/api/content")
+                        .param("userId", "user1")
+                        .param("page", "1")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code", is(Code.SUCCESS.getCode())))
+                .andExpect(jsonPath("$.data", hasSize(1)))
+                .andExpect(jsonPath("$.data[0].contentId", is("content1")))
+                .andExpect(jsonPath("$.data[0].title", is("title1")))
+                .andExpect(jsonPath("$.data[0].description", is("description1")))
+                .andExpect(jsonPath("$.data[0].price", is(100)))
+                .andExpect(jsonPath("$.data[0].paid", is(true)))
+                .andExpect(jsonPath("$.data[0].adultContent", is(true)));
     }
 }
